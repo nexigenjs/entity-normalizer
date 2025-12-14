@@ -1,13 +1,14 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
+import type { CoreEntitiesAPI } from '../../root/coreApi/types';
+import { PREFIX } from '../constants';
+
 import { COLLECTION_TAG } from './marker';
 import type {
   EntityCollectionOptions,
   EntityCollectionSnapshot,
   SystemDeps,
 } from './types';
-import type { CoreEntitiesAPI } from '../../root/coreApi/types';
-import { PREFIX } from '../constants';
 
 export class EntityCollection<T extends { id: string | number }, M> {
   private entitiesApi: CoreEntitiesAPI;

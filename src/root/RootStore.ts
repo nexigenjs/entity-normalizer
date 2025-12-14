@@ -1,5 +1,19 @@
 import { makeAutoObservable } from 'mobx';
 
+import { createStore } from '../create';
+import { EntityCleanerStore } from '../entities/cleaner';
+import {
+  COLLECTION_TAG,
+  MULTI_COLLECTION_TAG,
+} from '../entities/collection/marker';
+import { RECORD_TAG } from '../entities/record/marker';
+import { EntitiesStore } from '../entities/store';
+import type { AnySchema, TEntitiesStore } from '../entities/types';
+
+import { createCoreAPI } from './coreApi/create-core-api';
+import type { CoreAPI } from './coreApi/types';
+import { noopPersistence } from './fallback';
+import { SET_PERSISTENCE } from './marker';
 import type {
   RootStoreDeps,
   SystemDeps,
@@ -8,19 +22,6 @@ import type {
   ServiceClassMap,
   PersistenceNotifier,
 } from './types';
-import { createStore } from '../create';
-import { noopPersistence } from './fallback';
-import { SET_PERSISTENCE } from './marker';
-import { EntityCleanerStore } from '../entities/cleaner';
-import {
-  COLLECTION_TAG,
-  MULTI_COLLECTION_TAG,
-} from '../entities/collection/marker';
-import { EntitiesStore } from '../entities/store';
-import type { AnySchema, TEntitiesStore } from '../entities/types';
-import { createCoreAPI } from './coreApi/create-core-api';
-import type { CoreAPI } from './coreApi/types';
-import { RECORD_TAG } from '../entities/record/marker';
 
 export class RootStore<
   TApi,

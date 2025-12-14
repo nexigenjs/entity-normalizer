@@ -1,7 +1,8 @@
 import { runInAction } from 'mobx';
 
-import type { StoreShape } from './scanner';
 import type { SystemDeps } from '../root/types';
+
+import type { StoreShape } from './scanner';
 
 const SUPPRESS_KEY = '__suppressPersistNotify';
 
@@ -13,7 +14,7 @@ function decSuppress(store: any) {
 }
 
 export class Cleaner {
-  constructor(private deps: SystemDeps) {}
+  constructor(private deps: SystemDeps) { }
 
   applyReset(
     store: any,
@@ -37,14 +38,14 @@ export class Cleaner {
           for (const [key, val] of Object.entries(initialPlain)) {
             try {
               store[key] = val;
-            } catch {}
+            } catch { }
           }
 
           // single collections
           for (const key of shape.single) {
             try {
               store[key].reset?.();
-            } catch {}
+            } catch { }
           }
 
           // multi collections
@@ -58,14 +59,14 @@ export class Cleaner {
                   col.reset?.({ silent: true });
                 }
               }
-            } catch {}
+            } catch { }
           }
 
           // records
           for (const key of shape.records) {
             try {
               store[key].reset?.();
-            } catch {}
+            } catch { }
           }
         });
 

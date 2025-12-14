@@ -1,4 +1,3 @@
-import type { CoreEntitiesAPI } from './types';
 import type { EntityCleanerStore } from '../../entities/cleaner';
 import {
   createEntityCollection,
@@ -18,6 +17,8 @@ import type {
   TEntitiesStore,
 } from '../../entities/types';
 import type { TSchemaMap, PersistenceNotifier } from '../types';
+
+import type { CoreEntitiesAPI } from './types';
 
 export function createEntitiesAPI(deps: {
   entities: TEntitiesStore;

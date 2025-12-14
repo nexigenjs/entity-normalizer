@@ -1,7 +1,8 @@
 import { makeAutoObservable, observable } from 'mobx';
 
-import type { EntityBuckets, StoredEntity } from './types';
 import { META } from '../constants/values';
+
+import type { EntityBuckets, StoredEntity } from './types';
 
 export class EntitiesStore {
   private buckets = new Map<string, Record<string, StoredEntity<any>>>();

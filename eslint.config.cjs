@@ -1,10 +1,12 @@
 const { defineConfig } = require('eslint/config');
+
 const tsParser = require('@typescript-eslint/parser');
 const tsPlugin = require('@typescript-eslint/eslint-plugin');
+const importPlugin = require('eslint-plugin-import');
 
 module.exports = defineConfig([
   {
-    files: ['src/**/*.ts'],
+    files: ['src/**/*.{ts,tsx}'],
     ignores: ['dist/**', 'node_modules/**'],
 
     languageOptions: {
@@ -18,16 +20,29 @@ module.exports = defineConfig([
 
     plugins: {
       '@typescript-eslint': tsPlugin,
+      import: importPlugin,
+    },
+
+    settings: {
+      'import/resolver': {
+        typescript: {
+          project: './tsconfig.json',
+          alwaysTryTypes: true,
+        },
+        node: {
+          extensions: ['.js', '.ts', '.tsx'],
+        },
+      },
     },
 
     rules: {
-      // correctness
-      'no-console': ['error', { allow: ['warn', 'error'] }],
-      'no-debugger': 'error',
+      /* ---------- correctness ---------- */
       eqeqeq: ['error'],
       curly: ['error', 'all'],
+      'no-debugger': 'error',
+      'no-console': ['error', { allow: ['warn', 'error'] }],
 
-      // typescript
+      /* ---------- typescript ---------- */
       'no-unused-vars': 'off',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-use-before-define': ['error'],
@@ -36,14 +51,34 @@ module.exports = defineConfig([
         { prefer: 'type-imports' },
       ],
 
-      // library boundary
+      /* ---------- imports ---------- */
+      'import/no-unresolved': 'error',
+
+      'import/order': [
+        'error',
+        {
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index'],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
+        },
+      ],
+
+      /* ---------- style ---------- */
+      'no-multiple-empty-lines': ['error', { max: 1, maxBOF: 0, maxEOF: 0 }],
+      quotes: ['error', 'single'],
+      'eol-last': ['error', 'always'],
+      'prefer-const': 'error',
+
+      /* ---------- architecture guards ---------- */
       'no-restricted-imports': [
         'error',
         {
-          patterns: [
+          paths: [
             {
-              group: ['react', 'react-native'],
-              message: 'Core library must not depend on UI frameworks.',
+              name: 'mobx',
+              importNames: ['autorun', 'reaction', 'when'],
+              message:
+                'autorun / reaction / when are forbidden in Nexigen core. Use explicit command flow.',
             },
           ],
         },

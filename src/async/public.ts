@@ -1,4 +1,4 @@
-import type { AxiosError } from "./types";
+import type { AxiosError } from './types';
 
 export interface RetryStrategy {
   retries: number;

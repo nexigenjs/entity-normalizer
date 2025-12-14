@@ -12,7 +12,6 @@ export interface AxiosError<T = unknown> extends Error {
   code?: string;
 }
 
-
 export interface RetryStrategy {
   retries: number;
   delayMs: number;
@@ -29,5 +28,3 @@ export type RunOptions<TParams, TResult> = {
 
   retryStrategy?: RetryStrategy;
 };
-
-
