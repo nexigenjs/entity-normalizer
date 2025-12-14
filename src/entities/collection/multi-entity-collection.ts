@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx';
 
 import { EntityCollection } from './entity-collection';
 import { MULTI_COLLECTION_TAG, COLLECTION_TAG } from './marker';
+
 import type { MultiEntityCollection as PublicMultiEntityCollection } from './public';
 import type {
   EntityCollectionOptions,

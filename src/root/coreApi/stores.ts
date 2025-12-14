@@ -1,5 +1,4 @@
 import type { StoresSnapshot } from '../types';
-
 import type { CoreStoresAPI } from './types';
 
 export function createStoresAPI<TStores extends Record<string, any>>(

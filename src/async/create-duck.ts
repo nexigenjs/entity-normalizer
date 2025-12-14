@@ -1,4 +1,5 @@
 import { AsyncDuck } from './async-duck';
+
 import type { PublicAsyncDuck } from './public';
 
 export function createDuck<TFn extends (params: any) => Promise<any>>(fn: TFn) {

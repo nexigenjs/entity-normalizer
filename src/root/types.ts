@@ -1,5 +1,4 @@
 import type { AnySchema, TEntitiesStore } from '../entities';
-
 import type { CoreAPI } from './coreApi/types';
 import type { RootStore } from './RootStore';
 

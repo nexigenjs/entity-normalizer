@@ -1,7 +1,8 @@
 //@ts-nocheck
-import type { TEntitiesStore } from '../../types';
 import { BucketCollector } from '../bucket';
 import { SchemaWalker } from '../walker';
+
+import type { TEntitiesStore } from '../../types';
 
 // -----------------------------
 // MOCK ENTITIES

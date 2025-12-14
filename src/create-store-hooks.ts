@@ -1,4 +1,5 @@
 import { getRootStore } from './di/register-root-store';
+
 import type { RootStore } from './root/RootStore';
 
 /**

@@ -1,6 +1,7 @@
+import { StoreManager } from './manager';
+
 import type { DomainDeps, StoreDepsCombined } from '../root/types';
 
-import { StoreManager } from './manager';
 
 export function createStore<TStore>(
   StoreClass: new (deps: DomainDeps) => TStore,

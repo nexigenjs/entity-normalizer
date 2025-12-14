@@ -1,3 +1,4 @@
+import { deepClone } from './utils';
 import { DUCK_TAG } from '../async/marker';
 import {
   COLLECTION_TAG,
@@ -5,7 +6,6 @@ import {
 } from '../entities/collection/marker';
 import { RECORD_TAG } from '../entities/record/marker';
 
-import { deepClone } from './utils';
 
 export type StoreShape = {
   plain: Record<string, any>;

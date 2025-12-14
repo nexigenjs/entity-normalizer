@@ -1,8 +1,8 @@
 import { runInAction } from 'mobx';
 
+import type { StoreShape } from './scanner';
 import type { SystemDeps } from '../root/types';
 
-import type { StoreShape } from './scanner';
 
 const SUPPRESS_KEY = '__suppressPersistNotify';
 

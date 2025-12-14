@@ -1,5 +1,6 @@
-import type { CreateRootStoreConfig } from './public';
 import { RootStore } from './RootStore';
+
+import type { CreateRootStoreConfig } from './public';
 
 export function createRootStore<
   TApi,

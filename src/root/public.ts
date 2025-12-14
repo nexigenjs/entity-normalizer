@@ -1,5 +1,4 @@
 import type { PublicEntitySchema } from '../entities/public';
-
 import type { CoreAPI } from './coreApi/types';
 
 export type PublicSchemaMap = Record<string, PublicEntitySchema<any, any>>;

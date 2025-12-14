@@ -1,5 +1,6 @@
 import { EntityCollection } from './entity-collection';
 import { MultiEntityCollection as ProxyEntityCollection } from './multi-entity-collection';
+
 import type { MultiEntityCollection } from './public';
 import type { EntityCollectionOptions, SystemDeps } from './types';
 

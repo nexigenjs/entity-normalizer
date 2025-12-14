@@ -4,12 +4,11 @@
   "description": "Reactive entity infrastructure for complex client applications, built on MobX.",
   "license": "MIT",
   "type": "module",
-
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-
-  "files": ["dist"],
-
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
@@ -17,25 +16,21 @@
     "test": "vitest run",
     "build": "tsc"
   },
-
   "peerDependencies": {
     "mobx": ">=6.12 <7"
   },
-
   "devDependencies": {
-    "mobx": "^6.13.7",
-
-    "typescript": "^5.8.3",
-
-    "eslint": "^9.26.0",
-    "@typescript-eslint/parser": "^8.31.1",
     "@typescript-eslint/eslint-plugin": "^8.31.1",
-    "eslint-plugin-import": "^2.31.0",
+    "@typescript-eslint/parser": "^8.31.1",
+    "eslint": "^9.26.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
-
+    "eslint-plugin-import": "^2.31.0",
+    "mobx": "^6.13.7",
+    "prettier": "^3.7.4",
+    "typescript": "^5.8.3",
     "vitest": "^1.0.0"
   },
-
   "engines": {
     "node": ">=18"
   }

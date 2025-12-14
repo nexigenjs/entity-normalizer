@@ -1,11 +1,11 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 
+import { PREFIX } from '../constants';
+import { RECORD_TAG } from './marker';
+
 import type { CoreEntitiesAPI } from '../../root/coreApi/types';
 import type { EntityCleanerStore } from '../cleaner';
-import { PREFIX } from '../constants';
 import type { TEntitiesStore } from '../types';
-
-import { RECORD_TAG } from './marker';
 import type { EntityRecordSnapshot } from './types';
 
 export class EntityRecord<T extends { id: string | number }, M> {

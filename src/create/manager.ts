@@ -1,10 +1,11 @@
-import type { StoreDepsCombined, DomainDeps } from '../root/types';
 
 import { Cleaner } from './cleaner';
 import { StoreSnapshotExtractor } from './extractor';
 import { StoreProxy } from './proxy';
 import { Scanner, type StoreShape } from './scanner';
 import { defineHiddenProp } from './utils';
+
+import type { StoreDepsCombined, DomainDeps } from '../root/types';
 
 const SUPPRESS_KEY = '__suppressPersistNotify';
 

@@ -8,12 +8,11 @@ import {
 } from '../entities/collection/marker';
 import { RECORD_TAG } from '../entities/record/marker';
 import { EntitiesStore } from '../entities/store';
-import type { AnySchema, TEntitiesStore } from '../entities/types';
-
 import { createCoreAPI } from './coreApi/create-core-api';
-import type { CoreAPI } from './coreApi/types';
 import { noopPersistence } from './fallback';
 import { SET_PERSISTENCE } from './marker';
+
+import type { CoreAPI } from './coreApi/types';
 import type {
   RootStoreDeps,
   SystemDeps,
@@ -22,6 +21,7 @@ import type {
   ServiceClassMap,
   PersistenceNotifier,
 } from './types';
+import type { AnySchema, TEntitiesStore } from '../entities/types';
 
 export class RootStore<
   TApi,

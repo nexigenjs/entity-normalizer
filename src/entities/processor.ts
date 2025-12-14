@@ -1,9 +1,10 @@
-import { META } from '../constants/values';
-import type { TSchemaMap } from '../root/types';
 
 import { PREFIX } from './constants';
 import { createNormalizer } from './normalize';
+import { META } from '../constants/values';
+
 import type { GetEntity, TEntitiesStore, EntityProcessOptions } from './types';
+import type { TSchemaMap } from '../root/types';
 
 export class EntityProcessor {
   private readonly getEntity: GetEntity;

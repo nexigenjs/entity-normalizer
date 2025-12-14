@@ -1,6 +1,7 @@
 import { createEntitiesAPI } from './entities';
 import { createLifecycleAPI } from './lifecycle';
 import { createStoresAPI } from './stores';
+
 import type {
   CoreAPI,
   CoreEntitiesDeps,

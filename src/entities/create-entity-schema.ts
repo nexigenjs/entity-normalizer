@@ -1,9 +1,10 @@
+import { EntitySchema } from './schema';
+
 import type {
   PublicEntitySchema,
   EntitySchemaConfig,
   EntitySchemaDefinition,
 } from './public';
-import { EntitySchema } from './schema';
 
 export function createEntitySchema<TDto, TModel>(
   key: string,
