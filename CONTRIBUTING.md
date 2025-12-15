@@ -1,6 +1,7 @@
 # Contributing to Nexigen
 
 Thanks for your interest in contributing to **Nexigen** ❤️
+
 This project is a **core-level state management engine**, so we value
 correctness, consistency, and architectural discipline over speed.
 
