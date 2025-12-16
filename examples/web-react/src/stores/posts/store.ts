@@ -6,22 +6,23 @@ import {
 import { makeAutoObservable } from 'mobx';
 
 import { type PostModel } from './model';
+import { type Api } from '../../../../shared/api';
 import { ENTITY_KEY, REF_SOURCE } from '../../constants';
 
-import type { PostNormalizedDto } from './dto';
+import type { PostDto } from './dto';
 
 const PAGE_LIMIT = 20;
 
 export class PostsStore {
-  lists: MultiEntityCollection<PostNormalizedDto, PostModel>;
+  lists: MultiEntityCollection<PostDto, PostModel>;
 
   constructor(
     private deps: StoreDeps<{
-      api: any;
+      api: typeof Api;
     }>,
   ) {
     this.lists = this.deps.core.entities.createMultiCollection<
-      PostNormalizedDto,
+      PostDto,
       PostModel
     >({
       entityKey: ENTITY_KEY.POSTS,

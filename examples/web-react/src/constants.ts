@@ -11,4 +11,5 @@ export const REF_SOURCE = {
 
   //records
   CURRENT_VIEWER: 'current_viewer',
+  VIEWER_DETAILS: 'viewer_details',
 };

@@ -7,6 +7,7 @@ import { makeAutoObservable } from 'mobx';
 
 import { type CommentDto } from './dto';
 import { type CommentModel } from './model';
+import { type Api } from '../../../../shared/api';
 import { ENTITY_KEY, REF_SOURCE } from '../../constants';
 
 export class CommentsStore {
@@ -14,7 +15,7 @@ export class CommentsStore {
 
   constructor(
     private deps: StoreDeps<{
-      api: any;
+      api: typeof Api;
     }>,
   ) {
     this.list = this.deps.core.entities.createCollection<
@@ -28,8 +29,9 @@ export class CommentsStore {
     makeAutoObservable(this);
   }
 
-  fetchComments = createDuck(async () => {
-    const comments = await this.deps.api.Comments.getComments({
+  fetchComments = createDuck(async ({ postId }: { postId: string }) => {
+    const comments = await this.deps.api.Comments.getCommentsByPost({
+      postId: postId,
       page: this.list.pageNumber,
       limit: this.list.limit,
     });
