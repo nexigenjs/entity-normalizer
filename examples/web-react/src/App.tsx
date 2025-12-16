@@ -12,6 +12,7 @@ function App() {
 
   return (
     <>
+      <h3>Entities are normalized and shared between collections automatically</h3>
       <button onClick={() => setExample('posts')}>
         Posts Example (multi collection)
       </button>
