@@ -6,8 +6,8 @@ export const ENTITY_KEY = {
 
 export const REF_SOURCE = {
   //collections
-  POSTS: 'posts-feed',
-  COMMENTS: 'comments-feed',
+  POSTS_FEED: 'posts-feed',
+  COMMENTS_FEED: 'comments-feed',
 
   //records
   CURRENT_VIEWER: 'current_viewer',

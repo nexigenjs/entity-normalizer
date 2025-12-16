@@ -1,7 +1,9 @@
 import { makeAutoObservable } from 'mobx';
-import type { EntityGetter } from '@nexigen/entity-normalizer';
+
 import { ENTITY_KEY } from '../../constants';
+
 import type { PostNormalizedDto } from './dto';
+import type { EntityGetter } from '@nexigen/entity-normalizer';
 
 export class PostModel {
   id: string;

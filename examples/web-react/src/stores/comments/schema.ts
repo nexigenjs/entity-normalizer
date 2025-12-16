@@ -1,6 +1,7 @@
 import { createEntitySchema } from '@nexigen/entity-normalizer';
+
+import { CommentModel } from './model';
 import { ENTITY_KEY } from '../../constants';
-import { CommentModel } from './models';
 import { viewerSchema } from '../viewer/schema';
 
 export const commentSchema = createEntitySchema(

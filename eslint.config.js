@@ -1,10 +1,16 @@
-const { defineConfig } = require('eslint/config');
+import { defineConfig } from 'eslint/config';
 
-const tsParser = require('@typescript-eslint/parser');
-const tsPlugin = require('@typescript-eslint/eslint-plugin');
-const importPlugin = require('eslint-plugin-import');
+import tsParser from '@typescript-eslint/parser';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import importPlugin from 'eslint-plugin-import';
 
-module.exports = defineConfig([
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default defineConfig([
   {
     files: ['src/**/*.{ts,tsx}'],
     ignores: ['dist/**', 'node_modules/**'],

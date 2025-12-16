@@ -1,7 +1,7 @@
-import { viewerSchema } from './viewer/schema';
+import { ENTITY_KEY } from '../constants';
 import { commentSchema } from './comments/schema';
 import { postSchema } from './posts/schema';
-import { ENTITY_KEY } from '../constants';
+import { viewerSchema } from './viewer/schema';
 
 export const schemaMap = {
   [ENTITY_KEY.VIEWERS]: viewerSchema,

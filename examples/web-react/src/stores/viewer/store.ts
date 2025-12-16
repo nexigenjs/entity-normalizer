@@ -1,13 +1,14 @@
-import { makeAutoObservable } from 'mobx';
 import {
   createDuck,
   type EntityRecord,
   type StoreDeps,
 } from '@nexigen/entity-normalizer';
+import { makeAutoObservable } from 'mobx';
 
+import { type ViewerModel } from './model';
 import { ENTITY_KEY, REF_SOURCE } from '../../constants';
+
 import type { ViewerDto } from './dto';
-import { ViewerModel } from './model';
 
 type Deps = StoreDeps<{
   api: {

@@ -1,6 +1,7 @@
 import { createEntitySchema } from '@nexigen/entity-normalizer';
-import { ENTITY_KEY } from '../../constants';
+
 import { ViewerModel } from './model';
+import { ENTITY_KEY } from '../../constants';
 
 export const viewerSchema = createEntitySchema(
   ENTITY_KEY.VIEWERS,

@@ -1,5 +1,5 @@
-import type { ViewerDto } from '../viewer/dto';
 import type { CommentDto } from '../comments/dto';
+import type { ViewerDto } from '../viewer/dto';
 
 export interface PostDto {
   id: string;
