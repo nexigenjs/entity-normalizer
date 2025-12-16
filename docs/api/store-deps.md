@@ -33,14 +33,14 @@ it only declares _what it needs_.
 
 ```ts
 class PostsStore {
-	constructor(
-		private deps: StoreDeps<{
-			api: typeof Api;
-			stores: {
-				viewer: ViewerStore;
-			};
-		}>
-	) {}
+  constructor(
+    private deps: StoreDeps<{
+      api: typeof Api;
+      stores: {
+        viewer: ViewerStore;
+      };
+    }>,
+  ) {}
 }
 ```
 
@@ -120,9 +120,9 @@ StoreDeps makes stores easy to test:
 
 ```ts
 new PostsStore({
-	api: mockApi,
-	stores: { viewer: mockViewer },
-	core: mockCore,
+  api: mockApi,
+  stores: { viewer: mockViewer },
+  core: mockCore,
 });
 ```
 

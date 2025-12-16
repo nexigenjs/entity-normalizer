@@ -24,24 +24,24 @@ Models do NOT:
 
 ```ts
 export class PostModel {
-	id: string;
-	viewerId: string;
-	title: string;
+  id: string;
+  viewerId: string;
+  title: string;
 
-	constructor(
-		dto: PostDto,
-		private readonly get: EntityGetter
-	) {
-		this.id = dto.id;
-		this.viewerId = dto.viewerId;
-		this.title = dto.title;
+  constructor(
+    dto: PostDto,
+    private readonly get: EntityGetter,
+  ) {
+    this.id = dto.id;
+    this.viewerId = dto.viewerId;
+    this.title = dto.title;
 
-		makeAutoObservable(this, {}, { autoBind: true });
-	}
+    makeAutoObservable(this, {}, { autoBind: true });
+  }
 
-	get viewer() {
-		return this.get(ENTITY_KEY.VIEWER, this.viewerId);
-	}
+  get viewer() {
+    return this.get(ENTITY_KEY.VIEWER, this.viewerId);
+  }
 }
 ```
 

@@ -1,4 +1,3 @@
-
 # Async Ducks
 
 Async Ducks are the **only supported way** to execute asynchronous logic in Nexigen.
@@ -10,11 +9,13 @@ They represent **commands**, not data containers.
 ## What a Duck Is
 
 A duck is:
+
 - an observable async function
 - with built-in lifecycle state
 - safely integrated with MobX
 
 A duck is NOT:
+
 - a promise wrapper
 - a data store
 - a cache
@@ -37,11 +38,11 @@ login = createDuck(async () => {
 Every duck exposes:
 
 ```ts
-duck.isLoading
-duck.isRetrying
-duck.error
-duck.data
-duck.hasEverRun
+duck.isLoading;
+duck.isRetrying;
+duck.error;
+duck.data;
+duck.hasEverRun;
 ```
 
 All properties are observable.
@@ -55,6 +56,7 @@ login.run();
 ```
 
 Running a duck:
+
 - sets isLoading
 - resets error
 - executes async function
@@ -71,6 +73,7 @@ fetchPosts[group].run();
 ```
 
 Each scope has:
+
 - isolated loading
 - isolated error
 - shared logic
@@ -80,6 +83,7 @@ Each scope has:
 ## Error Handling
 
 Errors are:
+
 - captured
 - stored in duck.error
 - never thrown synchronously
@@ -92,7 +96,7 @@ This prevents UI crashes.
 
 ❌ Using async/await directly in components  
 ❌ Storing promises in stores  
-❌ Using ducks as caches  
+❌ Using ducks as caches
 
 ---
 

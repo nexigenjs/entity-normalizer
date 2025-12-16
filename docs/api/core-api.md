@@ -5,6 +5,7 @@ It represents the **infrastructure surface** that domain stores,
 services, and React hooks are allowed to interact with.
 
 Core API is:
+
 - public
 - stable
 - intentionally limited
@@ -61,6 +62,7 @@ core.entities.createRecord<TDto, TModel>({
 Creates an `EntityRecord`.
 
 Use cases:
+
 - current viewer
 - selected entity
 - singleton domain state
@@ -82,6 +84,7 @@ core.entities.createCollection<TDto, TModel>({
 Creates a single `EntityCollection`.
 
 Use cases:
+
 - lists
 - pagination
 - infinite scroll
@@ -121,11 +124,13 @@ core.entities.process({
 Normalizes raw DTOs into the entity graph.
 
 Behavior:
+
 - extracts entity ids
 - merges entities
 - attaches refSources
 
 This method is used internally by:
+
 - collections
 - records
 - async flows
@@ -141,6 +146,7 @@ core.entities.hydrate(snapshot);
 Hydrates entities from a snapshot.
 
 Used during:
+
 - application bootstrap
 - state restoration
 

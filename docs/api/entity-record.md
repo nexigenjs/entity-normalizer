@@ -56,6 +56,7 @@ record.data: Model | undefined
 ```
 
 Returns:
+
 - model instance if entity exists
 - `undefined` if record is empty or entity was removed
 
@@ -102,12 +103,14 @@ record.set(dto);
 ```
 
 Behavior:
+
 - normalizes incoming DTO
 - merges entity into `EntitiesStore`
 - attaches record refSource
 - updates `entityId`
 
 If multiple records reference the same entity:
+
 - the model instance is shared
 
 ---
@@ -129,6 +132,7 @@ record.reset();
 ```
 
 Behavior:
+
 - detaches record refSource
 - clears `entityId`
 - entity may be removed if orphaned
@@ -163,7 +167,7 @@ EntityRecord participates in garbage collection via refSources.
 
 ❌ Storing DTOs directly in stores  
 ❌ Copying `record.data` into local state  
-❌ Mutating entity fields outside models  
+❌ Mutating entity fields outside models
 
 ---
 

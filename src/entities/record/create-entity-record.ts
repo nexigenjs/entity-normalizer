@@ -4,7 +4,6 @@ import type { CoreEntitiesAPI } from '../../root/coreApi/types';
 import type { EntityCleanerStore } from '../cleaner';
 import type { TEntitiesStore } from '../types';
 
-
 export function createEntityRecord<T extends { id: string | number }, M>(
   options: { entityKey: string; recordId: string },
   system: {

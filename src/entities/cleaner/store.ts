@@ -4,7 +4,6 @@ import { META } from '../../constants/values';
 
 import type { AnySchema, TEntitiesStore } from '../types';
 
-
 export class EntityCleanerStore {
   private walker: SchemaWalker;
   private collector: BucketCollector;

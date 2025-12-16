@@ -1,4 +1,3 @@
-
 # Real-World Flows
 
 This document demonstrates **real application flows** using Nexigen.
@@ -17,6 +16,7 @@ login = createDuck(async () => {
 ```
 
 Effects:
+
 - entities merged
 - viewer record updated
 - UI reacts automatically

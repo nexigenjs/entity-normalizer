@@ -1,4 +1,3 @@
-
 import { PREFIX } from './constants';
 import { createNormalizer } from './normalize';
 import { META } from '../constants/values';

@@ -19,9 +19,9 @@ Used when:
 
 ```ts
 const lists = this.deps.core.entities.createMultiCollection({
-	entityKey: ENTITY_KEY.POST,
-	collectionId: REF_SOURCE.POSTS,
-	limit: 20,
+  entityKey: ENTITY_KEY.POST,
+  collectionId: REF_SOURCE.POSTS,
+  limit: 20,
 });
 ```
 

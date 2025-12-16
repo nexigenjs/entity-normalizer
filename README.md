@@ -105,8 +105,8 @@ yarn add @nexigen/entity-normalizer mobx mobx-react-lite
 
 ```ts
 export const ENTITY_KEY = {
-	VIEWER: 'viewers',
-	POST: 'posts',
+  VIEWER: 'viewers',
+  POST: 'posts',
 } as const;
 ```
 
@@ -116,20 +116,20 @@ export const ENTITY_KEY = {
 
 ```ts
 export const viewerSchema = createEntitySchema(
-	ENTITY_KEY.VIEWER,
-	{},
-	{ model: ViewerModel }
+  ENTITY_KEY.VIEWER,
+  {},
+  { model: ViewerModel },
 );
 ```
 
 ```ts
 export const postSchema = createEntitySchema(
-	ENTITY_KEY.POST,
-	{
-		viewer: viewerSchema,
-		viewers: [viewerSchema],
-	},
-	{ model: PostModel }
+  ENTITY_KEY.POST,
+  {
+    viewer: viewerSchema,
+    viewers: [viewerSchema],
+  },
+  { model: PostModel },
 );
 ```
 
@@ -139,8 +139,8 @@ export const postSchema = createEntitySchema(
 
 ```ts
 export const schemaMap = {
-	[ENTITY_KEY.VIEWER]: viewerSchema,
-	[ENTITY_KEY.POST]: postSchema,
+  [ENTITY_KEY.VIEWER]: viewerSchema,
+  [ENTITY_KEY.POST]: postSchema,
 };
 ```
 
@@ -153,16 +153,16 @@ They never own related entities directly.
 
 ```ts
 export class PostModel {
-	constructor(dto, get) {
-		this.id = dto.id;
-		this.viewerId = dto.viewerId;
-		this.title = dto.title;
-		makeAutoObservable(this);
-	}
+  constructor(dto, get) {
+    this.id = dto.id;
+    this.viewerId = dto.viewerId;
+    this.title = dto.title;
+    makeAutoObservable(this);
+  }
 
-	get viewer() {
-		return this.get(ENTITY_KEY.VIEWER, this.viewerId);
-	}
+  get viewer() {
+    return this.get(ENTITY_KEY.VIEWER, this.viewerId);
+  }
 }
 ```
 
@@ -175,22 +175,22 @@ They never store entity data directly.
 
 ```ts
 export class PostsStore {
-	lists;
+  lists;
 
-	constructor(deps) {
-		this.lists = deps.core.entities.createMultiCollection({
-			entityKey: ENTITY_KEY.POST,
-			collectionId: 'posts',
-			limit: 20,
-		});
+  constructor(deps) {
+    this.lists = deps.core.entities.createMultiCollection({
+      entityKey: ENTITY_KEY.POST,
+      collectionId: 'posts',
+      limit: 20,
+    });
 
-		makeAutoObservable(this);
-	}
+    makeAutoObservable(this);
+  }
 
-	fetchPosts = createDuck(async ({ group }) => {
-		const res = await deps.api.Posts.getPosts({ group });
-		this.lists[group].set(res);
-	});
+  fetchPosts = createDuck(async ({ group }) => {
+    const res = await deps.api.Posts.getPosts({ group });
+    this.lists[group].set(res);
+  });
 }
 ```
 
@@ -200,15 +200,15 @@ export class PostsStore {
 
 ```ts
 export const rootStore = createRootStore({
-	api: Api,
-	schemaMap,
-	stores: {
-		posts: PostsStore,
-		viewer: ViewerStore,
-	},
-	services: {
-		bootstrap: BootstrapService,
-	},
+  api: Api,
+  schemaMap,
+  stores: {
+    posts: PostsStore,
+    viewer: ViewerStore,
+  },
+  services: {
+    bootstrap: BootstrapService,
+  },
 });
 ```
 
@@ -222,18 +222,18 @@ registerRootStore(rootStore);
 
 ```ts
 export const { useStores, useServices, useCore } =
-	createStoreHooks<typeof rootStore>();
+  createStoreHooks<typeof rootStore>();
 ```
 
 ```tsx
 const PostsScreen = observer(() => {
-	const { posts } = useStores();
+  const { posts } = useStores();
 
-	useEffect(() => {
-		posts.fetchPosts.run({ group: 'active' });
-	}, []);
+  useEffect(() => {
+    posts.fetchPosts.run({ group: 'active' });
+  }, []);
 
-	return <List data={posts.lists.active.getList} />;
+  return <List data={posts.lists.active.getList} />;
 });
 ```
 

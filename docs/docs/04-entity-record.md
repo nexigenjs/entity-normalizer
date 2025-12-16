@@ -24,11 +24,11 @@ A record answers the question:
 
 ```ts
 const viewerRecord = this.deps.core.entities.createRecord<
-	ViewerDto,
-	ViewerModel
+  ViewerDto,
+  ViewerModel
 >({
-	entityKey: ENTITY_KEY.VIEWER,
-	recordId: REF_SOURCE.CURRENT_VIEWER,
+  entityKey: ENTITY_KEY.VIEWER,
+  recordId: REF_SOURCE.CURRENT_VIEWER,
 });
 ```
 
