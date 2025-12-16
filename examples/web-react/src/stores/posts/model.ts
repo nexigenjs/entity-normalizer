@@ -9,6 +9,7 @@ export class PostModel {
   id: string;
   viewerId: string;
   title: string;
+  commentsId?: string[];
 
   constructor(
     dto: PostNormalizedDto,
@@ -17,6 +18,7 @@ export class PostModel {
     this.id = dto.id;
     this.title = dto.title;
     this.viewerId = dto.viewerId;
+    this.commentsId = dto.commentsId;
 
     makeAutoObservable(this, {}, { autoBind: true });
   }

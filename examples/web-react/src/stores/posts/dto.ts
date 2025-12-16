@@ -19,5 +19,5 @@ export interface PostNormalizedDto {
   id: string;
   title: string;
   viewerId: string;
-  commentIds: string[];
+  commentsId: string[];
 }
