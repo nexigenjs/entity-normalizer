@@ -38,12 +38,12 @@ export const ViewerRecordsExample = observer(() => {
       <div style={{ display: 'flex', gap: 16 }}>
         <div style={{ flex: 1 }}>
           <h4>Current viewer</h4>
-          <ViewerCard viewer={currentViewer ?? null}/>
+          <ViewerCard viewer={currentViewer ?? null} />
         </div>
 
         <div style={{ flex: 1 }}>
           <h4>Viewer details u2 / Current Viewer Details</h4>
-          <ViewerCard viewer={viewerDetails ?? null}/>
+          <ViewerCard viewer={viewerDetails ?? null} />
         </div>
       </div>
     </div>

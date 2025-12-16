@@ -1,9 +1,4 @@
-import type {
-  ViewerDto,
-  PostDto,
-  CommentDto,
-  PostGroup,
-} from './dto';
+import type { ViewerDto, PostDto, CommentDto, PostGroup } from './dto';
 import { randomFrom } from './utils';
 
 // --------------------

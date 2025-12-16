@@ -1,6 +1,4 @@
-import {
-  createRootStore,
-} from '@nexigen/entity-normalizer';
+import { createRootStore } from '@nexigen/entity-normalizer';
 
 import { CommentsStore } from './comments/store';
 import { PostsStore } from './posts/store';

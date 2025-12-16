@@ -9,7 +9,6 @@ const toViewerPreview = (viewer: ViewerDto): ViewerDto => ({
 });
 
 export const ViewerApi = {
-
   async getCurrentViewer(): Promise<ViewerDto> {
     await delay(300);
 
