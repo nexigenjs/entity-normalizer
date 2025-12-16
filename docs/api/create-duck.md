@@ -13,7 +13,7 @@ inside Nexigen stores.
 ## Creating a Duck
 
 ```ts
-login = createDuck(async (params) => {
+login = createDuck(async params => {
   return api.login(params);
 });
 ```
@@ -127,7 +127,7 @@ duck.hasEverRun: boolean
 ## Aggregated State
 
 ```ts
-duck.asyncState
+duck.asyncState;
 ```
 
 Returns a stable snapshot:
@@ -180,7 +180,7 @@ Avoid imperative async control flow.
 ❌ Using `async/await` directly in components  
 ❌ Treating ducks as data stores  
 ❌ Relying on thrown errors  
-❌ Mutating store state outside actions  
+❌ Mutating store state outside actions
 
 ---
 

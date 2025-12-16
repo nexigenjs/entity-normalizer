@@ -1,4 +1,3 @@
-
 import { Cleaner } from './cleaner';
 import { StoreSnapshotExtractor } from './extractor';
 import { StoreProxy } from './proxy';

@@ -20,12 +20,12 @@ StoreDeps solves this structurally.
 
 ```ts
 class PostsStore {
-	constructor(
-		private deps: StoreDeps<{
-			api: typeof Api;
-			stores: { viewer: ViewerStore };
-		}>
-	) {}
+  constructor(
+    private deps: StoreDeps<{
+      api: typeof Api;
+      stores: { viewer: ViewerStore };
+    }>,
+  ) {}
 }
 ```
 

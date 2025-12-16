@@ -18,6 +18,7 @@ MultiEntityCollection is used when:
 - UI needs isolated loading / paging per group
 
 Typical examples:
+
 - tabs (active / past / archived)
 - filters
 - categories
@@ -30,6 +31,7 @@ Typical examples:
 A MultiEntityCollection is a **collection factory**, not a data container.
 
 It:
+
 - does not store items itself
 - lazily creates collections per key
 - guarantees isolation between groups
@@ -58,6 +60,7 @@ lists[key]: EntityCollection
 ```
 
 Accessing a key:
+
 - creates the collection lazily (if missing)
 - returns the same instance on subsequent access
 
@@ -78,6 +81,7 @@ Each key has its own:
 - refSource lifecycle
 
 But all keys share:
+
 - entity identity
 - models
 - normalization rules
@@ -95,7 +99,7 @@ Pagination is isolated:
 
 ```ts
 lists['active'].pageNumber; // 2
-lists['past'].pageNumber;   // 1
+lists['past'].pageNumber; // 1
 ```
 
 ---
@@ -103,6 +107,7 @@ lists['past'].pageNumber;   // 1
 ## Lifecycle & GC
 
 Each underlying `EntityCollection`:
+
 - attaches its own refSource
 - detaches entities independently
 - allows orphan cleanup when unused
@@ -116,7 +121,7 @@ does not affect other groups unless entities become orphaned.
 
 ❌ Storing list data outside collections  
 ❌ Sharing pagination state between keys  
-❌ Manually synchronizing groups  
+❌ Manually synchronizing groups
 
 ---
 

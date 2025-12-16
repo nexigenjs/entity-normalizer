@@ -22,11 +22,11 @@ It does NOT store objects.
 
 ```ts
 const viewers = this.deps.core.entities.createCollection<
-	ViewerDto, //types
-	ViewerModel
+  ViewerDto, //types
+  ViewerModel
 >({
-	entityKey: ENTITY_KEY.VIEWER,
-	collectionId: REF_SOURCE.VIEWERS,
+  entityKey: ENTITY_KEY.VIEWER,
+  collectionId: REF_SOURCE.VIEWERS,
 });
 ```
 

@@ -6,7 +6,6 @@ import {
 } from '../entities/collection/marker';
 import { RECORD_TAG } from '../entities/record/marker';
 
-
 export type StoreShape = {
   plain: Record<string, any>;
   single: string[];

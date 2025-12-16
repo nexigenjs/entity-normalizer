@@ -1,4 +1,3 @@
-
 # Schemas & Normalization
 
 Schemas define how raw API responses are transformed into a normalized entity graph.
@@ -8,12 +7,14 @@ Schemas define how raw API responses are transformed into a normalized entity gr
 ## Purpose of Schemas
 
 Schemas exist to:
+
 - flatten nested API responses
 - deduplicate entities
 - define relationships
 - map DTOs to Models
 
 Schemas do NOT:
+
 - fetch data
 - store state
 - contain business logic
@@ -42,12 +43,13 @@ const postSchema = createEntitySchema<PostDto, PostModel>(
 ### One-to-One
 
 ```ts
-viewer: viewerSchema
+viewer: viewerSchema;
 ```
 
 Produces:
+
 ```ts
-viewerId: string
+viewerId: string;
 ```
 
 ---
@@ -55,10 +57,11 @@ viewerId: string
 ### One-to-Many
 
 ```ts
-viewers: [viewerSchema]
+viewers: [viewerSchema];
 ```
 
 Produces:
+
 ```ts
 viewersId: string[]
 ```
@@ -78,10 +81,12 @@ viewersId: string[]
 Schemas tolerate partial payloads.
 
 If a nested entity is missing:
+
 - normalization continues
 - no error is thrown
 
 This allows:
+
 - lightweight list payloads
 - heavy detail payloads
 
@@ -91,7 +96,7 @@ This allows:
 
 ❌ Storing nested objects in models  
 ❌ Manual flattening  
-❌ Coupling schemas to API endpoints  
+❌ Coupling schemas to API endpoints
 
 ---
 

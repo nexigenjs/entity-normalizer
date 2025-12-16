@@ -12,9 +12,10 @@ import type {
   SystemDeps,
 } from './types';
 
-export class MultiEntityCollection<T extends { id: string | number }, M>
-  implements MultiCollection<T, M>
-{
+export class MultiEntityCollection<
+  T extends { id: string | number },
+  M,
+> implements MultiCollection<T, M> {
   [COLLECTION_TAG]: true = true;
   [MULTI_COLLECTION_TAG]: true = true;
 

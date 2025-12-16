@@ -3,6 +3,7 @@
 Entity Schemas define **how raw API data is transformed into a normalized entity graph**.
 
 A schema is the **single source of truth** for:
+
 - entity identity
 - relationships
 - normalization rules
@@ -21,6 +22,7 @@ An Entity Schema answers three fundamental questions:
 3. **Which model represents it at runtime?**
 
 Schemas are used by:
+
 - normalization engine
 - entity collections
 - entity records
@@ -40,7 +42,7 @@ const postSchema = createEntitySchema<PostDto, PostModel>(
   },
   {
     model: PostModel,
-  }
+  },
 );
 ```
 
@@ -51,12 +53,13 @@ const postSchema = createEntitySchema<PostDto, PostModel>(
 ### entityKey
 
 ```ts
-entityKey: string
+entityKey: string;
 ```
 
 A globally unique identifier for the entity type.
 
 Examples:
+
 - ENTITY_KEY.POST
 - ENTITY_KEY.VIEWER
 
@@ -65,7 +68,7 @@ Examples:
 ### relations
 
 ```ts
-relations: Record<string, EntitySchema | EntitySchema[]>
+relations: Record<string, EntitySchema | EntitySchema[]>;
 ```
 
 Defines structural relationships between entities.
@@ -73,11 +76,12 @@ Defines structural relationships between entities.
 Supported forms:
 
 ```ts
-viewer: viewerSchema
-viewers: [viewerSchema]
+viewer: viewerSchema;
+viewers: [viewerSchema];
 ```
 
 Behavior:
+
 - nested objects are normalized
 - references are replaced with xxxId / xxxId[]
 - related entities are merged into their own buckets
@@ -93,6 +97,7 @@ model: new (dto, entityGetter) => Model
 Defines the runtime representation of the entity.
 
 Models:
+
 - are instantiated once per entity
 - preserve identity across updates
 - expose derived logic only
@@ -135,7 +140,7 @@ viewers: {
 
 ❌ Multiple schemas per entity  
 ❌ Business logic in schemas  
-❌ Mutable schema definitions  
+❌ Mutable schema definitions
 
 ---
 

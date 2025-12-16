@@ -4,6 +4,7 @@ Nexigen provides a **typed React integration layer**
 built on top of the Root Store.
 
 Hooks are generated once and provide:
+
 - type-safe access to stores and services
 - full IDE autocompletion
 - MobX reactivity out of the box
@@ -18,13 +19,8 @@ Hooks are created from the Root Store type.
 import { rootStore } from '@core/state/rootStore';
 import { createStoreHooks } from '@nexigen/entity-normalizer';
 
-export const {
-  useStores,
-  useServices,
-  useStore,
-  useService,
-  useCore,
-} = createStoreHooks<typeof rootStore>();
+export const { useStores, useServices, useStore, useService, useCore } =
+  createStoreHooks<typeof rootStore>();
 ```
 
 This step should be done **once** in the application.
@@ -42,11 +38,7 @@ const stores = useStores();
 Returns all domain stores, fully typed.
 
 ```ts
-const {
-  posts,
-  viewer,
-  auth,
-} = useStores();
+const { posts, viewer, auth } = useStores();
 ```
 
 ---
@@ -155,6 +147,7 @@ No selectors or memoization are required.
 ## Type Safety
 
 All hooks are:
+
 - fully inferred from `rootStore`
 - strongly typed
 - IDE-friendly
@@ -168,7 +161,7 @@ will surface type errors immediately.
 
 ❌ Using hooks outside React components  
 ❌ Mutating store state outside actions  
-❌ Using hooks without `observer`  
+❌ Using hooks without `observer`
 
 ---
 

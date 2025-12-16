@@ -30,6 +30,7 @@ It answers the question:
 Replaces the entire collection with new items.
 
 Behavior:
+
 - normalizes incoming DTOs
 - replaces internal id list
 - resets pagination state
@@ -46,6 +47,7 @@ collection.set(response);
 Appends items to the end of the collection.
 
 Typical use:
+
 - pagination
 - infinite scroll
 
@@ -60,6 +62,7 @@ collection.append(response);
 Prepends items to the beginning of the collection.
 
 Typical use:
+
 - real-time updates
 - optimistic inserts
 
@@ -96,6 +99,7 @@ collection.updateItem(item);
 Removes a single entity from the collection by id.
 
 Behavior:
+
 - removes id from collection
 - detaches collection refSource
 - triggers cascade cleanup if orphaned
@@ -121,6 +125,7 @@ collection.removeIds([id1, id2]);
 Clears the collection.
 
 Behavior:
+
 - detaches all collection refSources
 - resets pagination flags
 

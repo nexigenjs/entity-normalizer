@@ -1,4 +1,3 @@
-
 import type { EntitySchema } from './schema';
 import type { EntitiesStore } from './store';
 import type { META } from '../constants/values';

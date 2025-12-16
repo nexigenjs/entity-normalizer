@@ -1,4 +1,3 @@
-
 # Anti-Patterns
 
 Violating these rules breaks Nexigen guarantees.
@@ -26,5 +25,6 @@ Violating these rules breaks Nexigen guarantees.
 ## Fix
 
 Return to:
+
 - entities as single source of truth
 - stores as orchestrators
