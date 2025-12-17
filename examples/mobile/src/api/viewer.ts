@@ -1,5 +1,6 @@
-import { delay } from './utils';
 import { viewers } from './db';
+import { delay } from './utils';
+
 import type { ViewerDto } from './dto';
 
 const toViewerPreview = (viewer: ViewerDto): ViewerDto => ({
@@ -9,7 +10,6 @@ const toViewerPreview = (viewer: ViewerDto): ViewerDto => ({
 });
 
 export const ViewerApi = {
-
   async getCurrentViewer(): Promise<ViewerDto> {
     await delay(300);
 

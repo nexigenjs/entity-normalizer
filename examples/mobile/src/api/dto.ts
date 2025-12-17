@@ -22,4 +22,3 @@ export interface PostDto {
   comments: CommentDto[];
   group: PostGroup;
 }
-

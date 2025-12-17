@@ -1,14 +1,10 @@
-import {
-  createRootStore,
-  registerRootStore,
-  createStoreHooks,
-} from '@nexigen/entity-normalizer';
+import { createRootStore } from '@nexigen/entity-normalizer';
 
+import { Api } from '../api';
 import { CommentsStore } from './comments/store';
 import { PostsStore } from './posts/store';
 import { schemaMap } from './schema-map';
 import { ViewerStore } from './viewer/store';
-import { Api } from '../../../shared/api';
 
 export const rootStore = createRootStore({
   api: Api,
@@ -21,7 +17,4 @@ export const rootStore = createRootStore({
   services: {},
 });
 
-export const { useStores, useServices, useStore, useService, useCore } =
-  createStoreHooks<typeof rootStore>();
-
-registerRootStore(rootStore);
+export type AppRootStore = typeof rootStore;
