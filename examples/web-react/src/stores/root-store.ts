@@ -1,10 +1,10 @@
 import { createRootStore } from '@nexigen/entity-normalizer';
 
+import { Api } from '../api';
 import { CommentsStore } from './comments/store';
 import { PostsStore } from './posts/store';
 import { schemaMap } from './schema-map';
 import { ViewerStore } from './viewer/store';
-import { Api } from '../../../shared/api';
 
 export const rootStore = createRootStore({
   api: Api,

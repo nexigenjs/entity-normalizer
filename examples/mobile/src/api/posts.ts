@@ -1,5 +1,6 @@
-import { delay } from './utils';
 import { posts } from './db';
+import { delay } from './utils';
+
 import type { PostDto, PostGroup } from './dto';
 
 export const PostsApi = {

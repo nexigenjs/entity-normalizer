@@ -1,5 +1,6 @@
-import { delay } from './utils';
 import { viewers } from './db';
+import { delay } from './utils';
+
 import type { ViewerDto } from './dto';
 
 const toViewerPreview = (viewer: ViewerDto): ViewerDto => ({

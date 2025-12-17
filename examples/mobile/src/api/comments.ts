@@ -1,5 +1,6 @@
-import { delay } from './utils';
 import { commentsByPost } from './db';
+import { delay } from './utils';
+
 import type { CommentDto } from './dto';
 
 export const CommentsApi = {

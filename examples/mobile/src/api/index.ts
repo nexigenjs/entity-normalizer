@@ -1,6 +1,6 @@
-import { ViewerApi } from './viewer';
-import { PostsApi } from './posts';
 import { CommentsApi } from './comments';
+import { PostsApi } from './posts';
+import { ViewerApi } from './viewer';
 
 export const Api = {
   Viewer: ViewerApi,
