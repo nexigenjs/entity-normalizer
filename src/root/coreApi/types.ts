@@ -13,6 +13,7 @@ export interface CoreAPIExtensions {}
 
 export type CoreInternalAPI = {
   setPersistence(notifier: PersistenceNotifier): void;
+  registerExtension(key: PropertyKey, api: unknown): void;
 };
 
 export type CoreStoresAPI<TStores> = {
@@ -82,6 +83,8 @@ export type CoreAPI<TStores = {}> = CoreAPIExtensions & {
   lifecycle: CoreLifecycleAPI;
   entities: CoreEntitiesAPI;
   stores: CoreStoresAPI<TStores>;
+
+  use<T>(key: PropertyKey): T | undefined;
 
   __internal: CoreInternalAPI;
 };

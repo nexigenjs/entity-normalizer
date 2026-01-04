@@ -1,11 +1,13 @@
 import { runInAction } from 'mobx';
 
-import type { SystemDeps } from '../root/types';
+import { SUPPRESS_KEY } from './constants';
 
-const SUPPRESS_KEY = '__suppressPersistNotify';
+import type { SystemDeps } from '../root/types';
 
 export class StoreProxy {
   private notifyQueued = false;
+  private pendingNotify = false;
+  private wrapped = new Map<string, Function>();
 
   constructor(
     private deps: SystemDeps,
@@ -28,7 +30,15 @@ export class StoreProxy {
         }
 
         if (typeof value === 'function') {
-          return this.wrapAction(target, value);
+          const key = String(prop);
+          const cached = this.wrapped.get(key);
+          if (cached) {
+            return cached;
+          }
+
+          const wrapped = this.wrapAction(target, value);
+          this.wrapped.set(key, wrapped);
+          return wrapped;
         }
 
         return value;
@@ -36,6 +46,14 @@ export class StoreProxy {
 
       set: (target, prop, val, receiver) => {
         const result = Reflect.set(target, prop, val, receiver);
+
+        if (
+          typeof prop === 'string' &&
+          (prop.startsWith('__') || prop === SUPPRESS_KEY)
+        ) {
+          return result;
+        }
+
         this.scheduleNotify(target);
         return result;
       },
@@ -44,6 +62,17 @@ export class StoreProxy {
 
   private scheduleNotify(target: any) {
     if ((target?.[SUPPRESS_KEY] ?? 0) > 0) {
+      this.pendingNotify = true;
+      if (!this.notifyQueued) {
+        this.notifyQueued = true;
+        queueMicrotask(() => {
+          this.notifyQueued = false;
+          if ((target?.[SUPPRESS_KEY] ?? 0) === 0 && this.pendingNotify) {
+            this.pendingNotify = false;
+            this.deps.getPersistence?.()?.onStoreStateChanged?.();
+          }
+        });
+      }
       return;
     }
 
@@ -51,7 +80,6 @@ export class StoreProxy {
       return;
     }
     this.notifyQueued = true;
-
     queueMicrotask(() => {
       this.notifyQueued = false;
       this.deps.getPersistence?.()?.onStoreStateChanged?.();
@@ -60,13 +88,20 @@ export class StoreProxy {
 
   private wrapAction(target: any, fn: Function) {
     return (...args: any[]) => {
-      const result = runInAction(() => fn.apply(target, args));
+      let result: any;
+
+      try {
+        result = runInAction(() => fn.apply(target, args));
+      } finally {
+        if (!(result instanceof Promise)) {
+          this.scheduleNotify(target);
+        }
+      }
 
       if (result instanceof Promise) {
         return result.finally(() => this.scheduleNotify(target));
       }
 
-      this.scheduleNotify(target);
       return result;
     };
   }

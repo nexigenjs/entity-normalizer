@@ -1,17 +1,17 @@
 import { runInAction } from 'mobx';
 
+import { incSuppress, decSuppress } from './utils';
+
 import type { StoreShape } from './scanner';
 import type { SystemDeps } from '../root/types';
 
-const SUPPRESS_KEY = '__suppressPersistNotify';
-
-function incSuppress(store: any) {
-  store[SUPPRESS_KEY] = (store[SUPPRESS_KEY] ?? 0) + 1;
-}
-function decSuppress(store: any) {
-  store[SUPPRESS_KEY] = Math.max(0, (store[SUPPRESS_KEY] ?? 0) - 1);
-}
-
+/**
+ * Cleaner
+ *
+ * - resetStore is a **silent, infra-only operation**
+ * - MUST NOT trigger persistence notifications
+ * - persistence lifecycle is handled by StoreProxy / higher-level APIs
+ */
 export class Cleaner {
   constructor(private deps: SystemDeps) {}
 
@@ -21,6 +21,7 @@ export class Cleaner {
   ) {
     const initialPlain = shape.plain;
 
+    // already patched
     if (typeof store.resetStore === 'function') {
       return;
     }
@@ -32,49 +33,54 @@ export class Cleaner {
       value: () => {
         incSuppress(store);
 
-        runInAction(() => {
-          // plain fields
-          for (const [key, val] of Object.entries(initialPlain)) {
-            try {
-              store[key] = val;
-            } catch {}
-          }
+        try {
+          runInAction(() => {
+            // -------------------------
+            // plain fields
+            // -------------------------
+            for (const [key, val] of Object.entries(initialPlain)) {
+              try {
+                store[key] = val;
+              } catch {}
+            }
 
-          // single collections
-          for (const key of shape.single) {
-            try {
-              store[key].reset?.();
-            } catch {}
-          }
+            // -------------------------
+            // single collections
+            // -------------------------
+            for (const key of shape.single) {
+              try {
+                store[key]?.reset?.();
+              } catch {}
+            }
 
-          // multi collections
-          for (const key of shape.multi) {
-            const mc = store[key];
-            try {
-              if (mc?.resetAll) {
-                mc.resetAll();
-              } else if (mc?.getSubCollections) {
-                for (const col of mc.getSubCollections().values()) {
-                  col.reset?.({ silent: true });
+            // -------------------------
+            // multi collections
+            // -------------------------
+            for (const key of shape.multi) {
+              const mc = store[key];
+              try {
+                if (mc?.resetAll) {
+                  mc.resetAll();
+                } else if (mc?.getSubCollections) {
+                  for (const col of mc.getSubCollections().values()) {
+                    col.reset?.({ silent: true });
+                  }
                 }
-              }
-            } catch {}
-          }
+              } catch {}
+            }
 
-          // records
-          for (const key of shape.records) {
-            try {
-              store[key].reset?.();
-            } catch {}
-          }
-        });
-
-        decSuppress(store);
-
-        // 1 notify, async
-        queueMicrotask(() =>
-          this.deps?.getPersistence?.()?.onStoreStateChanged?.(),
-        );
+            // -------------------------
+            // records
+            // -------------------------
+            for (const key of shape.records) {
+              try {
+                store[key]?.reset?.();
+              } catch {}
+            }
+          });
+        } finally {
+          decSuppress(store);
+        }
       },
     });
   }
