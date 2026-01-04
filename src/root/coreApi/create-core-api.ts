@@ -23,5 +23,5 @@ export function createCoreAPI<TStores extends Record<string, any>>(deps: {
     stores: createStoresAPI(deps.stores),
     use: deps.use,
     __internal: deps.__internal,
-  };
+  } as unknown as CoreAPI<TStores>;
 }

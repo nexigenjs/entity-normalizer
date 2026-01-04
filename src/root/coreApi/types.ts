@@ -79,14 +79,15 @@ export type CoreGCAPI = {
   processOrphan(): void;
 };
 
-export type CoreAPI<TStores = {}> = CoreAPIExtensions & {
+export type CoreAPIWithInternal<TStores = {}> = CoreAPI<TStores> & {
+  __internal: CoreInternalAPI;
+};
+
+export type CoreAPI<TStores = {}> = {
   lifecycle: CoreLifecycleAPI;
   entities: CoreEntitiesAPI;
   stores: CoreStoresAPI<TStores>;
-
   use<T>(key: PropertyKey): T | undefined;
-
-  __internal: CoreInternalAPI;
 };
 
 export type CoreEntitiesDeps = {
