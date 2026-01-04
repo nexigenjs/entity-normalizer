@@ -1,5 +1,5 @@
 import { StoreSnapshotExtractor } from '../extractor';
-import { Scanner, type StoreShape } from '../scanner';
+import { type StoreShape } from '../scanner';
 
 jest.mock('mobx', () => ({
   runInAction: (fn: any) => fn(),
@@ -7,11 +7,9 @@ jest.mock('mobx', () => ({
 
 describe('StoreSnapshotExtractor', () => {
   let extractor: StoreSnapshotExtractor;
-  let scanner: Scanner;
 
   beforeEach(() => {
-    scanner = new Scanner();
-    extractor = new StoreSnapshotExtractor(scanner);
+    extractor = new StoreSnapshotExtractor();
   });
 
   // --------------------------------------------------
