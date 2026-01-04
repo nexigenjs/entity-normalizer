@@ -20,6 +20,7 @@ const INTERNAL_KEYS = new Set([
   'resetStore',
   '__getSnapshot',
   '__applySnapshot',
+  '__suppressPersistNotify',
 ]);
 
 export class Scanner {

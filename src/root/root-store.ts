@@ -20,6 +20,7 @@ import type {
   StoreClassMap,
   ServiceClassMap,
   PersistenceNotifier,
+  DomainDeps,
 } from './types';
 import type { AnySchema, TEntitiesStore } from '../entities/types';
 
@@ -33,8 +34,8 @@ export class RootStore<
     [K in keyof TStores]: InstanceType<TStores[K]>;
   }>;
 
-  private entities: TEntitiesStore;
-  private entitiesCleaner: EntityCleanerStore;
+  private entities!: TEntitiesStore;
+  private entitiesCleaner!: EntityCleanerStore;
   private persistence?: PersistenceNotifier;
 
   [SET_PERSISTENCE](notifier: PersistenceNotifier) {
@@ -46,25 +47,130 @@ export class RootStore<
 
   private _isInitialized = false;
 
+  private storesRef!: {
+    [K in keyof TStores]: InstanceType<TStores[K]>;
+  };
+
+  private _domainDeps?: DomainDeps;
+  private _systemDeps?: SystemDeps;
+  private _combinedDeps?: StoreDepsCombined;
+
+  private _decorators?: {
+    isRecord: (v: any) => boolean;
+    isCollection: (v: any) => boolean;
+    isMultiCollection: (v: any) => boolean;
+  };
+
   constructor(
     private deps: RootStoreDeps<TApi, TSchemaMap, TStores, TServices>,
   ) {
-    const self = this;
+    this.initEntities();
 
-    // ---------------------------------------------
-    // Core systems
-    // ---------------------------------------------
+    this.initStoresRef();
+
+    this.core = this.createCore(this.storesRef);
+    this.buildStores(this.combinedDeps);
+    this.attachStoresToCore(this.storesRef);
+    this.buildServices(this.domainDeps);
+    this.setupPlugins();
+    this.hideCyclicDeps(this.domainDeps);
+
+    makeAutoObservable(this, {
+      core: false,
+      services: false,
+      stores: false,
+
+      entities: false,
+      entitiesCleaner: false,
+      persistence: false,
+      storesRef: false,
+
+      _domainDeps: false,
+      _systemDeps: false,
+      _combinedDeps: false,
+      _decorators: false,
+
+      _isInitialized: true,
+    } as any);
+  }
+
+  private get isInitialized() {
+    return this._isInitialized;
+  }
+
+  private setInitialized(v: boolean) {
+    this._isInitialized = v;
+  }
+
+  private get decorators() {
+    if (!this._decorators) {
+      this._decorators = {
+        isRecord: (v: any) => v?.[RECORD_TAG] === true,
+        isCollection: (v: any) => v?.[COLLECTION_TAG] === true,
+        isMultiCollection: (v: any) => v?.[MULTI_COLLECTION_TAG] === true,
+      };
+    }
+
+    return this._decorators;
+  }
+
+  private initStoresRef() {
+    this.storesRef = {} as {
+      [K in keyof TStores]: InstanceType<TStores[K]>;
+    };
+  }
+
+  private get domainDeps() {
+    if (!this._domainDeps) {
+      const self = this;
+      this._domainDeps = {
+        api: this.deps.api,
+        get stores() {
+          return self.stores;
+        },
+        get services() {
+          return self.services;
+        },
+        core: this.core,
+      };
+    }
+    return this._domainDeps;
+  }
+
+  private get systemDeps(): SystemDeps {
+    if (!this._systemDeps) {
+      this._systemDeps = {
+        getPersistence: () => this.persistence ?? noopPersistence,
+        entities: this.entities,
+      };
+    }
+    return this._systemDeps;
+  }
+
+  private get combinedDeps(): StoreDepsCombined {
+    if (!this._combinedDeps) {
+      this._combinedDeps = {
+        domain: this.domainDeps,
+        system: this.systemDeps,
+      };
+    }
+    return this._combinedDeps;
+  }
+
+  private initEntities() {
     this.entities = new EntitiesStore() as TEntitiesStore;
     this.entitiesCleaner = new EntityCleanerStore(
       this.entities,
       this.deps.schemaMap,
     );
+  }
 
-    const storesRef = {} as {
-      [K in keyof TStores]: InstanceType<TStores[K]>;
-    };
+  private createCore(storesRef: any) {
+    const self = this;
 
-    this.core = createCoreAPI({
+    const extensions = Object.create(null);
+
+    return createCoreAPI({
       lifecycle: {
         getIsInitialized: () => self.isInitialized,
         setInitialized: (v: boolean) => self.setInitialized(v),
@@ -75,76 +181,51 @@ export class RootStore<
         schemaMap: this.deps.schemaMap,
         getPersistence: () => this.persistence ?? noopPersistence,
       },
+      use<T>(key: PropertyKey): T | undefined {
+        return extensions[key] as T | undefined;
+      },
       stores: storesRef,
       __internal: {
         setPersistence: notifier => {
           this[SET_PERSISTENCE](notifier);
         },
+        registerExtension(key: PropertyKey, api: unknown) {
+          extensions[key] = api;
+        },
       },
     });
+  }
 
-    // ---------------------------------------------
-    // Deps
-    // ---------------------------------------------
-    const domainDeps = {
-      api: deps.api,
-      get stores() {
-        return self.stores;
-      },
-      get services() {
-        return self.services;
-      },
-      core: this.core,
-    };
-
-    const systemDeps: SystemDeps = {
-      getPersistence: () => this.persistence ?? noopPersistence,
-      entities: this.entities,
-    };
-
-    const combinedDeps: StoreDepsCombined = {
-      domain: domainDeps,
-      system: systemDeps,
-    };
-
-    // ---------------------------------------------
-    // Plugins
-    // ---------------------------------------------
-
-    const decorators = {
-      isRecord: (v: any) => v?.[RECORD_TAG] === true,
-      isCollection: (v: any) => v?.[COLLECTION_TAG] === true,
-      isMultiCollection: (v: any) => v?.[MULTI_COLLECTION_TAG] === true,
-    };
-
+  private setupPlugins() {
     for (const plugin of this.deps.plugins ?? []) {
       plugin.setup({
         entities: this.entities,
         core: this.core,
         config: plugin.config,
-        domain: domainDeps,
-        decorators,
+        stores: this.stores,
+        services: this.services,
+        decorators: this.decorators,
       });
     }
+  }
 
-    // ---------------------------------------------
-    // Build stores
-    // ---------------------------------------------
+  private buildStores(combinedDeps: StoreDepsCombined) {
     this.stores = Object.fromEntries(
       Object.entries(this.deps.stores).map(([key, StoreClass]) => {
         const instance = createStore(StoreClass as any, combinedDeps);
         return [key, instance];
       }),
-    ) as any;
+    ) as { [K in keyof TStores]: InstanceType<TStores[K]> };
+  }
 
+  private attachStoresToCore(storesRef: any) {
     Object.assign(storesRef, this.stores);
+  }
 
-    // ---------------------------------------------
-    // Build services
-    // ---------------------------------------------
+  private buildServices(domainDeps: DomainDeps) {
     this.services = Object.fromEntries(
       Object.entries(this.deps.services).map(([key, ServiceClass]) => {
-        const instance = new (ServiceClass as any)(domainDeps);
+        const instance = new ServiceClass(domainDeps);
 
         Object.defineProperty(instance, 'deps', {
           enumerable: false,
@@ -154,47 +235,36 @@ export class RootStore<
 
         return [key, instance];
       }),
-    ) as any;
+    ) as { [K in keyof TServices]: InstanceType<TServices[K]> };
+  }
 
-    // Hide cyclical getters inside domainDeps
-
+  private hideCyclicDeps(domainDeps: DomainDeps) {
     Object.defineProperty(this, 'deps', {
       enumerable: false,
       configurable: true,
-      writable: true,
+      writable: false,
     });
 
     Object.defineProperty(domainDeps, 'stores', {
       enumerable: false,
       configurable: true,
+      writable: false,
     });
 
     Object.defineProperty(domainDeps, 'services', {
       enumerable: false,
       configurable: true,
+      writable: false,
     });
 
     Object.defineProperty(domainDeps, 'core', {
       enumerable: false,
       configurable: true,
+      writable: false,
     });
 
     Object.defineProperty(this.core, '__internal', {
       enumerable: false,
     });
-
-    makeAutoObservable(this, {
-      core: false,
-      services: false,
-      stores: false,
-    });
-  }
-
-  private get isInitialized() {
-    return this._isInitialized;
-  }
-
-  private setInitialized(v: boolean) {
-    this._isInitialized = v;
   }
 }

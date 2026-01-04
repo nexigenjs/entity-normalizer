@@ -1,18 +1,16 @@
 import { runInAction } from 'mobx';
 
-import { type StoreShape } from './scanner';
+import { deepClone } from './utils';
 
-import type { Scanner } from './scanner';
+import type { StoreShape } from './scanner';
 
 export class StoreSnapshotExtractor {
-  constructor(private scanner: Scanner) {}
-
   getSnapshot(store: any, shape: StoreShape) {
     const out: Record<string, any> = {};
 
-    // plain
+    // plain (clone for safety)
     for (const key of Object.keys(shape.plain)) {
-      out[key] = store[key];
+      out[key] = deepClone(store[key]);
     }
 
     // single collections
@@ -51,14 +49,14 @@ export class StoreSnapshotExtractor {
         }
       }
 
-      // single
+      // single collections
       for (const key of shape.single) {
         if (snap[key]) {
           store[key]?.applySnapshot?.(snap[key], { silent: true });
         }
       }
 
-      // multi
+      // multi collections
       for (const key of shape.multi) {
         if (snap[key]) {
           store[key]?.applyMultiSnapshot?.(snap[key]);

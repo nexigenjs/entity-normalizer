@@ -1,3 +1,26 @@
+import { SUPPRESS_KEY } from './constants';
+
+function ensureSuppress(store: any) {
+  if (!Object.prototype.hasOwnProperty.call(store, SUPPRESS_KEY)) {
+    Object.defineProperty(store, SUPPRESS_KEY, {
+      value: 0,
+      writable: true,
+      configurable: true,
+      enumerable: false,
+    });
+  }
+}
+
+export function incSuppress(store: any) {
+  ensureSuppress(store);
+  store[SUPPRESS_KEY]++;
+}
+
+export function decSuppress(store: any) {
+  ensureSuppress(store);
+  store[SUPPRESS_KEY] = Math.max(0, store[SUPPRESS_KEY] - 1);
+}
+
 export function defineHiddenProp<T extends object, K extends string>(
   obj: T,
   key: K,

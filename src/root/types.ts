@@ -96,7 +96,8 @@ export type RootStorePlugin<TConfig = unknown> = {
     entities: any;
     core: Record<string, any>;
     config: TConfig;
-    domain: DomainDeps;
+    stores: DomainDeps['stores'];
+    services: DomainDeps['services'];
     decorators: Decorators;
   }): void;
 };

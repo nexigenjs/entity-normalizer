@@ -153,15 +153,14 @@ describe('Cleaner.applyReset()', () => {
   // -----------------------------------------
   // TEST 6 — notifyStoreStateChanged after reset
   // -----------------------------------------
-  it('calls notifyStoreStateChanged() after reset (async)', async () => {
+  it('does NOT call notifyStoreStateChanged() during reset', async () => {
     const store: any = {};
 
     cleaner.applyReset(store, baseShape);
     store.resetStore();
 
-    // flush microtask
     await Promise.resolve();
 
-    expect(root.getPersistence().onStoreStateChanged).toHaveBeenCalledTimes(1);
+    expect(root.getPersistence().onStoreStateChanged).not.toHaveBeenCalled();
   });
 });

@@ -2,18 +2,9 @@ import { Cleaner } from './cleaner';
 import { StoreSnapshotExtractor } from './extractor';
 import { StoreProxy } from './proxy';
 import { Scanner, type StoreShape } from './scanner';
-import { defineHiddenProp } from './utils';
+import { defineHiddenProp, incSuppress, decSuppress } from './utils';
 
 import type { StoreDepsCombined, DomainDeps } from '../root/types';
-
-const SUPPRESS_KEY = '__suppressPersistNotify';
-
-function incSuppress(store: any) {
-  store[SUPPRESS_KEY] = (store[SUPPRESS_KEY] ?? 0) + 1;
-}
-function decSuppress(store: any) {
-  store[SUPPRESS_KEY] = Math.max(0, (store[SUPPRESS_KEY] ?? 0) - 1);
-}
 
 export class StoreManager {
   private scanner = new Scanner();
@@ -22,7 +13,7 @@ export class StoreManager {
 
   constructor(private deps: StoreDepsCombined) {
     this.cleaner = new Cleaner(deps.system);
-    this.extractor = new StoreSnapshotExtractor(this.scanner);
+    this.extractor = new StoreSnapshotExtractor();
   }
 
   create<TStore>(StoreClass: new (deps: DomainDeps) => TStore): TStore {
@@ -40,8 +31,11 @@ export class StoreManager {
     defineHiddenProp(instance as any, '__applySnapshot', (snap: any) => {
       // suppress persist spam while mutating many fields
       incSuppress(instance);
-      this.extractor.applySnapshot(instance, snap, shape);
-      decSuppress(instance);
+      try {
+        this.extractor.applySnapshot(instance, snap, shape);
+      } finally {
+        decSuppress(instance);
+      }
 
       // one notify after restore
       queueMicrotask(() =>
