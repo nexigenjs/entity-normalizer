@@ -1,4 +1,4 @@
-import { makeAutoObservable } from 'mobx';
+import { makeObservable, computed, action } from 'mobx';
 
 import { createStore } from '../create';
 import { EntityCleanerStore } from '../entities/cleaner';
@@ -73,24 +73,15 @@ export class RootStore<
     this.attachStoresToCore(this.storesRef);
     this.buildServices(this.domainDeps);
     this.setupPlugins();
-    this.hideCyclicDeps(this.domainDeps);
+    this.hidePrivateProperties();
 
-    makeAutoObservable(this, {
-      core: false,
-      services: false,
-      stores: false,
-
-      entities: false,
-      entitiesCleaner: false,
-      persistence: false,
-      storesRef: false,
-
-      _domainDeps: false,
-      _systemDeps: false,
-      _combinedDeps: false,
-      _decorators: false,
-
-      _isInitialized: true,
+    makeObservable(this, {
+      isInitialized: computed,
+      setInitialized: action,
+      // NOTE:
+      // `isInitialized` is intentionally private.
+      // We use `as any` here to keep lifecycle accessible ONLY via Core API.
+      // Do NOT access RootStore lifecycle directly.
     } as any);
   }
 
@@ -227,42 +218,12 @@ export class RootStore<
       Object.entries(this.deps.services).map(([key, ServiceClass]) => {
         const instance = new ServiceClass(domainDeps);
 
-        Object.defineProperty(instance, 'deps', {
-          enumerable: false,
-          configurable: true,
-          writable: true,
-        });
-
         return [key, instance];
       }),
     ) as { [K in keyof TServices]: InstanceType<TServices[K]> };
   }
 
-  private hideCyclicDeps(domainDeps: DomainDeps) {
-    Object.defineProperty(this, 'deps', {
-      enumerable: false,
-      configurable: true,
-      writable: false,
-    });
-
-    Object.defineProperty(domainDeps, 'stores', {
-      enumerable: false,
-      configurable: true,
-      writable: false,
-    });
-
-    Object.defineProperty(domainDeps, 'services', {
-      enumerable: false,
-      configurable: true,
-      writable: false,
-    });
-
-    Object.defineProperty(domainDeps, 'core', {
-      enumerable: false,
-      configurable: true,
-      writable: false,
-    });
-
+  private hidePrivateProperties() {
     Object.defineProperty(this.core, '__internal', {
       enumerable: false,
     });
