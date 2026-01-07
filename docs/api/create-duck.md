@@ -159,7 +159,7 @@ Resets:
 - data
 - execution history
 
-Does **not** cancel an in-flight request.
+Also signals cancellation of any in-flight execution.
 
 ---
 
@@ -187,6 +187,32 @@ Re-executes the duck using the **last run parameters**.
 - does **not** change retry configuration
 
 `refresh()` is explicit by design and is **not** an alias for `run()`.
+
+---
+
+## Canceling a Duck
+
+```ts
+duck.cancel();
+```
+
+`duck.cancel()` cancels the current execution, if any.
+
+Cancellation is propagated through `executionAsyncContext`.
+
+Each running duck automatically provides an `AbortSignal`.
+You can access it via `executionAsyncContext.currentSignal()` and pass it to your transport layer (e.g. API client).
+
+You only need to wire this once — all ducks will reuse it automatically.
+
+```ts
+const signal = executionAsyncContext.currentSignal();
+// your transport layer (e.g. axios, fetch)
+// pass the signal once and all ducks will support cancellation
+await api.fetch(params, signal);
+```
+
+After that, all ducks automatically support cancellation without additional code.
 
 ---
 

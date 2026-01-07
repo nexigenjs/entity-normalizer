@@ -1,5 +1,6 @@
-import { makeObservable, observable, action } from 'mobx';
+import { makeObservable, observable, action, runInAction } from 'mobx';
 
+import { CanceledError, isCanceled } from './cancel';
 import { executionAsyncContext } from './execution-context';
 import { DUCK_TAG } from './marker';
 import { defaultRetryStrategy } from './retry';
@@ -13,12 +14,19 @@ export class AsyncDuck<TParams, TResult> {
   private _data: TResult | null = null;
   private _hasEverRun = false;
 
+  private _inFlight = false;
+  private _lastSuccessParams?: TParams;
+  private _lastRunSucceeded = false;
+
   private fn: (params?: TParams) => Promise<TResult>;
   private _keyed = new Map<string, AsyncDuck<TParams, TResult>>();
   private _proxy?: Readonly<this & Record<string, AsyncDuck<TParams, TResult>>>;
-  private _pendingPromise: Promise<TResult | undefined> | null = null;
 
   private _lastRunParams?: TParams;
+  private _abortController: AbortController | null = null;
+
+  private _tokenCounter = 0;
+  private _activeToken = 0;
 
   constructor(fn: (params?: TParams) => Promise<TResult>) {
     this.fn = fn;
@@ -49,6 +57,7 @@ export class AsyncDuck<TParams, TResult> {
       setSuccess: action,
       setError: action,
       reset: action,
+      cancel: action,
     });
   }
 
@@ -76,7 +85,11 @@ export class AsyncDuck<TParams, TResult> {
     this._data = data;
     this._isLoading = false;
     this._isRetrying = false;
+
     this._hasEverRun = true;
+    this._lastRunSucceeded = true;
+    this._lastSuccessParams = this._lastRunParams;
+
     onSuccess?.(data);
   }
 
@@ -88,24 +101,65 @@ export class AsyncDuck<TParams, TResult> {
     this._isRetrying = false;
     this._hasEverRun = true;
 
+    this._lastRunSucceeded = false;
     onError?.(normalized);
   }
 
+  private abortAndInvalidate() {
+    if (this._abortController && (this._isLoading || this._isRetrying)) {
+      this._abortController.abort();
+    }
+    this._abortController = null;
+
+    this._activeToken = ++this._tokenCounter;
+  }
+
   reset() {
-    this._isLoading = false;
-    this._isRetrying = false;
+    this.cancel();
     this._error = null;
     this._data = null;
     this._hasEverRun = false;
-    this._pendingPromise = null;
+    this._lastSuccessParams = undefined;
     this._lastRunParams = undefined;
+  }
+
+  cancel() {
+    this.abortAndInvalidate();
+
+    this.setLoading(false);
   }
 
   // -------------------------------------
   // UTILS
   // -------------------------------------
-  private sleep(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+  private sleep(ms: number, signal?: AbortSignal | null) {
+    return new Promise<void>((resolve, reject) => {
+      if (!signal) {
+        setTimeout(resolve, ms);
+        return;
+      }
+
+      if (signal.aborted) {
+        reject(new CanceledError());
+        return;
+      }
+
+      let timer: ReturnType<typeof setTimeout> | null = null;
+
+      const onAbort = () => {
+        if (timer) {
+          clearTimeout(timer);
+        }
+        reject(new CanceledError());
+      };
+
+      timer = setTimeout(() => {
+        signal.removeEventListener('abort', onAbort);
+        resolve();
+      }, ms);
+
+      signal.addEventListener('abort', onAbort, { once: true });
+    });
   }
 
   // -------------------------------------
@@ -114,14 +168,23 @@ export class AsyncDuck<TParams, TResult> {
   private async runWithRetry(
     params: TParams | undefined,
     retryStrategy: RetryStrategy,
+    signal: AbortSignal | null,
   ): Promise<TResult> {
     const retry = { ...defaultRetryStrategy, ...retryStrategy };
     const max = retry.retries ?? 0;
 
     for (let attempt = 1; attempt <= max + 1; attempt++) {
+      if (signal?.aborted) {
+        throw new CanceledError();
+      }
+
       try {
         return await this.fn(params);
       } catch (error: unknown) {
+        if (isCanceled(error, signal)) {
+          throw new CanceledError();
+        }
+
         const normalized =
           error instanceof Error ? error : new Error(String(error));
 
@@ -132,11 +195,16 @@ export class AsyncDuck<TParams, TResult> {
           throw normalized;
         }
 
-        this._isRetrying = true;
+        runInAction(() => {
+          this._isRetrying = true;
+        });
 
-        const delay = retry.backoff ? retry.delayMs * attempt : retry.delayMs;
+        const baseDelay = retry.delayMs ?? 0;
+        const delay = retry.backoff ? baseDelay * attempt : baseDelay;
 
-        await this.sleep(delay);
+        if (delay > 0) {
+          await this.sleep(delay, signal);
+        }
       }
     }
 
@@ -149,8 +217,14 @@ export class AsyncDuck<TParams, TResult> {
   async run(
     options?: RunOptions<TParams, TResult>,
   ): Promise<TResult | undefined> {
+    if (this._inFlight) {
+      return undefined;
+    }
+
+    this._inFlight = true;
+
     if (options?.skip) {
-      return;
+      return undefined;
     }
 
     if (options?.key) {
@@ -160,49 +234,62 @@ export class AsyncDuck<TParams, TResult> {
       });
     }
 
-    if (this._pendingPromise) {
-      return this._pendingPromise;
-    }
+    const token = this._activeToken;
 
-    if (this._isLoading || this._isRetrying) {
-      return this._pendingPromise!;
-    }
+    const controller = new AbortController();
+    this._abortController = controller;
 
     const { params, onSuccess, onError, retryStrategy } = options ?? {};
+    this._lastRunParams = params;
 
-    if (params !== undefined) {
-      this._lastRunParams = params;
-    }
+    this.setLoading(!!retryStrategy);
 
-    const isRetry = !!retryStrategy;
-    this.setLoading(isRetry);
-
-    this._pendingPromise = (async () => {
+    return executionAsyncContext.withAbort(controller.signal, async () => {
       try {
+        const signal = executionAsyncContext.currentSignal();
+
         const result = retryStrategy
-          ? await this.runWithRetry(params, retryStrategy)
+          ? await this.runWithRetry(params, retryStrategy, signal)
           : await this.fn(params);
+
+        if (this._activeToken !== token) {
+          return undefined;
+        }
+        if (controller.signal.aborted) {
+          return undefined;
+        }
 
         this.setSuccess(result, onSuccess);
         return result;
       } catch (err) {
+        if (this._activeToken !== token) {
+          return undefined;
+        }
+
+        if (isCanceled(err, controller.signal)) {
+          this._isLoading = false;
+          this._isRetrying = false;
+          return undefined;
+        }
+
         this.setError(err, onError);
         return undefined;
       } finally {
-        this._pendingPromise = null;
+        this._inFlight = false;
       }
-    })();
-
-    return this._pendingPromise;
+    });
   }
 
   refresh(): Promise<TResult | undefined> {
-    if (!this._lastRunParams) {
+    if (!this._lastRunSucceeded) {
       return Promise.resolve(undefined);
     }
 
-    return executionAsyncContext.runWith('refresh', () =>
-      this.run({ params: this._lastRunParams }),
+    this._inFlight = false;
+    this.abortAndInvalidate();
+
+    return executionAsyncContext.withIntent('refresh', () =>
+      this.run({ params: this._lastSuccessParams }),
     );
   }
 
@@ -211,6 +298,9 @@ export class AsyncDuck<TParams, TResult> {
   // -------------------------------------
   get isLoading() {
     return this._isLoading;
+  }
+  get isInFlight() {
+    return this._inFlight;
   }
   get isRetrying() {
     return this._isRetrying;
