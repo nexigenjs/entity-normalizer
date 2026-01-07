@@ -17,15 +17,19 @@ export type RunOptions<TParams, TResult> = {
 };
 
 export interface PublicExecutionContext {
-  runWith<T>(intent: ExecutionIntent, fn: () => Promise<T>): Promise<T>;
-
-  current(): ExecutionIntent;
+  // ---------- intent ----------
+  withIntent<T>(intent: ExecutionIntent, fn: () => Promise<T>): Promise<T>;
   is(intent: ExecutionIntent): boolean;
+
+  // ---------- abort ----------
+  withAbort<T>(signal: AbortSignal, fn: () => Promise<T>): Promise<T>;
+  currentSignal(): AbortSignal | null;
 }
 
 export interface PublicAsyncDuck<TParams, TResult> {
   run(options?: RunOptions<TParams, TResult>): Promise<TResult | undefined>;
   refresh(): Promise<TResult | undefined>;
+  cancel(): void;
 
   readonly isLoading: boolean;
   readonly isRetrying: boolean;

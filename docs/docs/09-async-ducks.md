@@ -54,6 +54,7 @@ All properties are observable.
 ```ts
 login.run();
 posts.refresh();
+posts.cancel();
 ```
 
 Running a duck:
@@ -77,6 +78,22 @@ It is intended for **explicit revalidation**, such as pull-to-refresh or manual 
 
 Unlike `run()`, refresh may bypass transport-level caching
 (depending on the underlying API implementation).
+
+---
+
+### Canceling a Duck
+
+```ts
+posts.cancel();
+```
+
+`posts.cancel()` - stops the currently running execution, if any.
+
+It is intended for explicit interruption, such as screen unmounts,
+navigation changes, or invalidating stale requests.
+
+Unlike reset(), cancel does not clear state and does not set an error.
+It only signals the current execution to stop.
 
 ---
 
