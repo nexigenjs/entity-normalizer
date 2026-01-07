@@ -217,15 +217,11 @@ export class AsyncDuck<TParams, TResult> {
   async run(
     options?: RunOptions<TParams, TResult>,
   ): Promise<TResult | undefined> {
-    if (this._inFlight) {
+    if (options?.skip || this._inFlight) {
       return undefined;
     }
 
     this._inFlight = true;
-
-    if (options?.skip) {
-      return undefined;
-    }
 
     if (options?.key) {
       return this.getKeyed(options.key).run({
