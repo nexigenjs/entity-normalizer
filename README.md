@@ -1,10 +1,17 @@
 # Nexigen
 
-**Entity-Normalized State Management for MobX**
+**Domain-Level Entity & Data Engine for React / React Native**
 
-Nexigen is an open-source, domain-level state management engine built on top of MobX.
+Nexigen is an open-source, domain-level **entity & data engine**, built on top of MobX.
 It provides a strict **entity-first architecture** for managing normalized data,
 relationships, collections, and async workflows in complex applications.
+
+Nexigen is a domain-level entity and data engine, not a UI state manager. It is production-ready for large React, React Native applications.
+
+⚠️ Nexigen is **not a UI state manager** like MobX, Zustand, Recoil, or Jotai.
+Those tools manage reactive state.
+Nexigen manages **domain data, entity identity, relationships, and lifecycle**.
+It is designed to work **alongside** a state manager, not replace it.
 
 Nexigen is designed for applications where:
 
@@ -14,6 +21,34 @@ Nexigen is designed for applications where:
 - simple stores are no longer enough
 
 > Nexigen brings backend-style data modeling and lifecycle guarantees to the client.
+
+---
+
+## When You Should Consider Nexigen
+
+Use Nexigen if you are building a React or React Native application with:
+
+- a large or long-lived domain
+- many interconnected entities
+- data shared across multiple screens
+- pagination + details + updates overlapping
+- async workflows that require abort / retry / refresh
+- memory growth caused by cached entities
+- extensible plugin system (GC, persistence, infrastructure extensions)
+- traditional state managers no longer scale for your domain
+
+If your app is mostly form state or local UI state, Nexigen is probably overkill.
+
+---
+
+## Nexigen vs State Managers
+
+Nexigen does **not compete** with MobX, Zustand, Redux, Recoil, or Jotai.
+
+State managers handle **reactive UI state**.
+Nexigen handles **domain data, entity graphs, identity, and lifecycle**.
+
+In real applications, Nexigen is used **together with** a state manager.
 
 ---
 
@@ -45,7 +80,7 @@ Nexigen solves this by treating **entities as first-class citizens**.
   All data lives in a single normalized entity graph.
 
 - **Deterministic Lifecycle**
-  Entities exist only while referenced.
+  Entities exist only while referenced (with configured cleanup strategies).
 
 - **Explicit Async Commands**
   Async logic is modeled as commands, not state.
